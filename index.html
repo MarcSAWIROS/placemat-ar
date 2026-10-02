@@ -3,50 +3,175 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Virtual Placemat AR Try-On</title>
-  <!-- Load Model Viewer script -->
+  <title>AR Try-On | Haus Stitch Inspired</title>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
   <style>
-    body { 
-      margin: 0; 
-      padding: 0; 
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: #f4f4f4;
+    :root {
+      --bg-color: #FAFAFA;
+      --text-color: #2B2B2B;
+      --accent-color: #1A1A1A;
+      --border-color: #E0E0E0;
     }
-    model-viewer { 
-      width: 100vw; 
-      height: 100vh; 
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    .ar-button {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #000000;
-      color: #ffffff;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 30px;
-      font-size: 16px;
-      font-weight: 600;
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 16px;
+    }
+
+    /* Logo Styling */
+    .logo-container {
+      margin-top: 10px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .logo-container img {
+      max-width: 180px;
+      height: auto;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      transition: opacity 0.2s ease;
+    }
+
+    .logo-container img:hover {
+      opacity: 0.8;
+    }
+
+    /* 3D Viewer Container */
+    .viewer-container {
+      width: 100%;
+      max-width: 500px;
+      height: 380px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      --poster-color: transparent;
+    }
+
+    /* Selection Buttons */
+    .design-selector {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .select-btn {
+      flex: 1;
+      padding: 12px 16px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .select-btn.active {
+      border-color: var(--accent-color);
+      background: var(--accent-color);
+      color: #FFFFFF;
+    }
+
+    /* AR Trigger Button */
+    .ar-launch-btn {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 500px;
+      padding: 16px;
+      background-color: var(--accent-color);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      transition: transform 0.1s ease, background 0.2s ease;
+    }
+
+    .ar-launch-btn:active {
+      transform: scale(0.98);
     }
   </style>
 </head>
 <body>
 
-  <model-viewer 
-    src="placemat.glb" 
-    alt="Table Placemat Design" 
-    ar 
-    ar-modes="webxr scene-viewer quick-look" 
-    camera-controls 
-    touch-action="pan-y">
-    <button slot="ar-button" class="ar-button">
-      View on your table (AR)
-    </button>
-  </model-viewer>
+  <!-- Header Logo (Links to Haus Stitch website) -->
+  <div class="logo-container">
+    <a href="https://hausstitch.com/" target="_blank" rel="noopener noreferrer">
+      <img src="LOGO.jpeg" alt="Brand Logo">
+    </a>
+  </div>
+
+  <!-- 3D Model Viewer Container -->
+  <div class="viewer-container">
+    <model-viewer 
+      id="ar-viewer"
+      src="design1.glb" 
+      alt="Virtual Table Placemat Try-On" 
+      ar 
+      ar-modes="webxr scene-viewer quick-look" 
+      ar-placement="floor"
+      ar-scale="auto"
+      camera-controls 
+      touch-action="pan-y"
+      orientation="90deg 0deg 0deg"
+      shadow-intensity="1">
+      
+      <!-- Native AR Trigger Slot -->
+      <button slot="ar-button" id="hidden-ar-btn" style="display: none;"></button>
+    </model-viewer>
+  </div>
+
+  <!-- Design Selector Buttons -->
+  <div class="design-selector">
+    <button class="select-btn active" onclick="switchDesign('design1.glb', this)">Design 1</button>
+    <button class="select-btn" onclick="switchDesign('design2.glb', this)">Design 2</button>
+  </div>
+
+  <!-- Custom AR Button -->
+  <button class="ar-launch-btn" onclick="triggerAR()">View on Your Table (AR)</button>
+
+  <script>
+    const viewer = document.getElementById('ar-viewer');
+    const hiddenArBtn = document.getElementById('hidden-ar-btn');
+
+    // Switch between Design 1 and Design 2
+    function switchDesign(modelFile, element) {
+      viewer.src = modelFile;
+      document.querySelectorAll('.select-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+    // Trigger the AR experience when clicking the main button
+    function triggerAR() {
+      hiddenArBtn.click();
+    }
+  </script>
 
 </body>
 </html>
