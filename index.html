@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>HAUS STITCH — Virtual Table Try-On</title>
+  <title>HAUS STITCH — Virtual Placemat AR</title>
   
   <!-- Typography from Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,15 +44,15 @@
       flex-direction: column;
       align-items: center;
       min-height: 100dvh;
-      padding: 20px 16px max(24px, env(safe-area-inset-bottom));
+      padding: 24px 16px max(24px, env(safe-area-inset-bottom));
       max-width: 520px;
       margin: 0 auto;
     }
 
     /* Logo Header Section */
     header {
-      margin-top: 8px;
-      margin-bottom: 20px;
+      margin-top: 4px;
+      margin-bottom: 24px;
       text-align: center;
       width: 100%;
       display: flex;
@@ -72,14 +72,13 @@
     }
 
     .brand-logo {
-      max-width: 190px;
+      max-width: 200px;
       height: auto;
-      max-height: 60px;
+      max-height: 64px;
       object-fit: contain;
       display: block;
     }
 
-    /* Fallback branding if image is loading or missing */
     .brand-logo:not([src]), .brand-logo[src=""] {
       display: none;
     }
@@ -87,16 +86,16 @@
     .subtitle {
       font-size: 11px;
       font-weight: 500;
-      letter-spacing: 2px;
+      letter-spacing: 2.5px;
       text-transform: uppercase;
       color: var(--hs-accent);
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     /* 3D Viewer Container */
     .viewer-card {
       width: 100%;
-      height: 380px;
+      height: 420px;
       background: var(--hs-card-bg);
       border: 1px solid var(--hs-border);
       border-radius: 20px;
@@ -120,7 +119,7 @@
       top: 14px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(8px);
       border: 1px solid var(--hs-border);
       padding: 6px 14px;
@@ -138,61 +137,11 @@
       white-space: nowrap;
     }
 
-    /* Orientation Calibration Bar */
-    .orientation-bar {
-      margin-top: 14px;
-      width: 100%;
-      background: var(--hs-card-bg);
-      border: 1px solid var(--hs-border);
-      border-radius: 14px;
-      padding: 10px 14px;
-      box-shadow: 0 2px 8px var(--hs-shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .orientation-title {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--hs-accent);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .rotation-presets {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-    }
-
-    .preset-btn {
-      padding: 6px;
-      background: var(--hs-bg);
-      border: 1px solid var(--hs-border);
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--hs-dark);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: center;
-    }
-
-    .preset-btn.active {
-      background: var(--hs-dark);
-      color: #FFFFFF;
-      border-color: var(--hs-dark);
-    }
-
     /* Design Selector Buttons */
     .design-selector {
       display: flex;
       gap: 12px;
-      margin-top: 16px;
+      margin-top: 20px;
       width: 100%;
     }
 
@@ -200,12 +149,11 @@
       flex: 1;
       background: var(--hs-card-bg);
       border: 1.5px solid var(--hs-border);
-      padding: 12px 14px;
+      padding: 14px;
       border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
       cursor: pointer;
       transition: all 0.25s ease;
       box-shadow: 0 2px 8px var(--hs-shadow);
@@ -225,12 +173,12 @@
 
     /* AR Trigger Button */
     .ar-button {
-      margin-top: 18px;
+      margin-top: 20px;
       width: 100%;
       background-color: var(--hs-dark);
       color: #FFFFFF;
       border: none;
-      padding: 16px;
+      padding: 18px;
       border-radius: 35px;
       font-family: 'Montserrat', sans-serif;
       font-size: 13px;
@@ -255,9 +203,9 @@
       height: 18px;
     }
 
-    /* Informational Notes Box */
+    /* Instructions Footer Box */
     .ar-instructions {
-      margin-top: 16px;
+      margin-top: 18px;
       width: 100%;
       font-size: 11px;
       color: #666666;
@@ -266,7 +214,7 @@
       background: rgba(255, 255, 255, 0.6);
       border: 1px dashed var(--hs-border);
       border-radius: 12px;
-      padding: 10px 14px;
+      padding: 12px 16px;
     }
   </style>
 </head>
@@ -291,9 +239,15 @@
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
-        Drag to rotate preview
+        Drag with 1 finger to rotate view
       </div>
 
+      <!-- 
+        NOTE ON ORIENTATION:
+        The orientation="90deg 0deg 0deg" attribute sets the placemat flat on table surfaces.
+        If your 3D GLB model is oriented on a different plane from your software export,
+        change it to orientation="-90deg 0deg 0deg" or orientation="0deg 90deg 0deg".
+      -->
       <model-viewer 
         id="ar-viewer"
         src="design1.glb" 
@@ -314,18 +268,6 @@
         <!-- Hidden Slot Button triggered by main custom button -->
         <button slot="ar-button" id="hidden-ar-trigger" style="display: none;"></button>
       </model-viewer>
-    </div>
-
-    <!-- Rotation Presets Bar (Solves flat table orientation issues) -->
-    <div class="orientation-bar">
-      <div class="orientation-title">
-        <span>If tissue stands vertically, select angle:</span>
-      </div>
-      <div class="rotation-presets">
-        <button class="preset-btn active" onclick="setOrientation('90deg 0deg 0deg', this)">Flat (90°)</button>
-        <button class="preset-btn" onclick="setOrientation('270deg 0deg 0deg', this)">Flat (270°)</button>
-        <button class="preset-btn" onclick="setOrientation('0deg 0deg 0deg', this)">Default (0°)</button>
-      </div>
     </div>
 
     <!-- Design Selector Buttons -->
@@ -349,35 +291,24 @@
     </button>
 
     <div class="ar-instructions">
-      <strong>In AR mode:</strong> Use two fingers to drag and move the placemat across your table, rotate it, or pinch to resize.
+      <strong>In AR mode on your table:</strong> Drag with 2 fingers to move or rotate the placemat across your table surface, or pinch to adjust scale.
     </div>
 
   </div>
 
-  <!-- JavaScript Logic -->
   <script>
     const viewer = document.getElementById('ar-viewer');
     const hiddenArTrigger = document.getElementById('hidden-ar-trigger');
 
-    // Switch between design1.glb and design2.glb
+    // Switch model between design1.glb and design2.glb
     function selectDesign(cardElement, modelFile) {
       viewer.src = modelFile;
 
-      // Update button visual state
       document.querySelectorAll('.design-card').forEach(card => card.classList.remove('active'));
       cardElement.classList.add('active');
     }
 
-    // Set model orientation rotation degrees
-    function setOrientation(degString, btnElement) {
-      viewer.orientation = degString;
-
-      // Update button visual state
-      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
-      btnElement.classList.add('active');
-    }
-
-    // Trigger AR launch via hidden slot element
+    // Trigger native AR view launch
     function launchAR() {
       hiddenArTrigger.click();
     }
