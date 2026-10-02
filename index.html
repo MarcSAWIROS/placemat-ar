@@ -2,316 +2,176 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>HAUS STITCH — Virtual Placemat AR</title>
-  
-  <!-- Typography from Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- Google Model Viewer Web Component -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR Try-On | Haus Stitch Inspired</title>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-
   <style>
     :root {
-      --hs-bg: #FAF8F5;
-      --hs-dark: #1F2E23;
-      --hs-accent: #8C907A;
-      --hs-border: #E5E0D8;
-      --hs-card-bg: #FFFFFF;
-      --hs-shadow: rgba(31, 46, 35, 0.08);
+      --bg-color: #FAFAFA;
+      --text-color: #2B2B2B;
+      --accent-color: #1A1A1A;
+      --border-color: #E0E0E0;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      background-color: var(--hs-bg);
-      font-family: 'Montserrat', sans-serif;
-      color: var(--hs-dark);
-      overflow-x: hidden;
-    }
-
-    .app-viewport {
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100dvh;
-      padding: 24px 16px max(24px, env(safe-area-inset-bottom));
-      max-width: 520px;
-      margin: 0 auto;
+      min-height: 100vh;
+      padding: 20px 16px;
     }
 
-    /* Logo Header Section */
-    header {
-      margin-top: 4px;
+    /* Logo Styling */
+    .logo-container {
+      margin-top: 10px;
       margin-bottom: 24px;
       text-align: center;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
 
-    .logo-link {
-      display: inline-block;
-      text-decoration: none;
-      transition: opacity 0.25s ease, transform 0.25s ease;
-    }
-
-    .logo-link:hover, .logo-link:active {
-      opacity: 0.85;
-      transform: scale(0.99);
-    }
-
-    .brand-logo {
-      max-width: 200px;
+    .logo-container img {
+      max-width: 180px;
       height: auto;
-      max-height: 64px;
-      object-fit: contain;
-      display: block;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
     }
 
-    .brand-logo:not([src]), .brand-logo[src=""] {
-      display: none;
-    }
-
-    .subtitle {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: var(--hs-accent);
-      margin-top: 10px;
+    .logo-container img:hover {
+      opacity: 0.8;
     }
 
     /* 3D Viewer Container */
-    .viewer-card {
+    .viewer-container {
       width: 100%;
-      height: 420px;
-      background: var(--hs-card-bg);
-      border: 1px solid var(--hs-border);
-      border-radius: 20px;
-      position: relative;
+      max-width: 500px;
+      height: 380px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 8px 24px var(--hs-shadow);
-      display: flex;
-      flex-direction: column;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     }
 
     model-viewer {
       width: 100%;
       height: 100%;
       --poster-color: transparent;
-      background: radial-gradient(circle at center, #FFFFFF 0%, var(--hs-bg) 100%);
     }
 
-    /* Interactive Instruction Badge */
-    .hint-badge {
-      position: absolute;
-      top: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--hs-border);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--hs-dark);
-      letter-spacing: 0.5px;
-      pointer-events: none;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 8px var(--hs-shadow);
-      white-space: nowrap;
-    }
-
-    /* Design Selector Buttons */
+    /* Selection Buttons */
     .design-selector {
       display: flex;
       gap: 12px;
       margin-top: 20px;
       width: 100%;
+      max-width: 500px;
     }
 
-    .design-card {
+    .select-btn {
       flex: 1;
-      background: var(--hs-card-bg);
-      border: 1.5px solid var(--hs-border);
-      padding: 14px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 12px 16px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-color);
       cursor: pointer;
-      transition: all 0.25s ease;
-      box-shadow: 0 2px 8px var(--hs-shadow);
+      transition: all 0.2s ease;
     }
 
-    .design-card.active {
-      background: var(--hs-dark);
-      border-color: var(--hs-dark);
+    .select-btn.active {
+      border-color: var(--accent-color);
+      background: var(--accent-color);
       color: #FFFFFF;
-    }
-
-    .design-card span {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
     }
 
     /* AR Trigger Button */
-    .ar-button {
+    .ar-launch-btn {
       margin-top: 20px;
       width: 100%;
-      background-color: var(--hs-dark);
+      max-width: 500px;
+      padding: 16px;
+      background-color: var(--accent-color);
       color: #FFFFFF;
       border: none;
-      padding: 18px;
-      border-radius: 35px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 13px;
+      border-radius: 30px;
+      font-size: 15px;
       font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
+      letter-spacing: 0.5px;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(31, 46, 35, 0.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      transition: transform 0.1s ease, background 0.2s ease;
     }
 
-    .ar-button:active {
-      transform: scale(0.97);
-    }
-
-    .ar-button svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    /* Instructions Footer Box */
-    .ar-instructions {
-      margin-top: 18px;
-      width: 100%;
-      font-size: 11px;
-      color: #666666;
-      line-height: 1.5;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.6);
-      border: 1px dashed var(--hs-border);
-      border-radius: 12px;
-      padding: 12px 16px;
+    .ar-launch-btn:active {
+      transform: scale(0.98);
     }
   </style>
 </head>
 <body>
 
-  <div class="app-viewport">
-    
-    <!-- Brand Header with LOGO.png -->
-    <header>
-      <a href="https://hausstitch.com/" target="_blank" rel="noopener noreferrer" class="logo-link">
-        <img src="LOGO.png" alt="Haus Stitch Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('text-logo').style.display='block';">
-        <h1 id="text-logo" style="display:none; font-family:'Cormorant Garamond', serif; font-size:26px; font-weight:600; letter-spacing:3px; color:var(--hs-dark);">HAUS STITCH</h1>
-      </a>
-      <p class="subtitle">Virtual Placemat Try-On</p>
-    </header>
-
-    <!-- 3D Model Card & WebAR Preview -->
-    <div class="viewer-card">
-      <div class="hint-badge">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-        Drag with 1 finger to rotate view
-      </div>
-
-      <!-- 
-        NOTE ON ORIENTATION:
-        The orientation="90deg 0deg 0deg" attribute sets the placemat flat on table surfaces.
-        If your 3D GLB model is oriented on a different plane from your software export,
-        change it to orientation="-90deg 0deg 0deg" or orientation="0deg 90deg 0deg".
-      -->
-      <model-viewer 
-        id="ar-viewer"
-        src="design1.glb" 
-        alt="Haus Stitch Placemat Design" 
-        ar 
-        ar-modes="webxr scene-viewer quick-look" 
-        ar-placement="floor"
-        ar-scale="auto"
-        orientation="90deg 0deg 0deg"
-        camera-controls 
-        touch-action="pan-y"
-        shadow-intensity="1.2"
-        shadow-softness="0.8"
-        exposure="1"
-        bounds="tight"
-        interaction-prompt="none">
-        
-        <!-- Hidden Slot Button triggered by main custom button -->
-        <button slot="ar-button" id="hidden-ar-trigger" style="display: none;"></button>
-      </model-viewer>
-    </div>
-
-    <!-- Design Selector Buttons -->
-    <div class="design-selector">
-      <div class="design-card active" onclick="selectDesign(this, 'design1.glb')">
-        <span>Design 1</span>
-      </div>
-      <div class="design-card" onclick="selectDesign(this, 'design2.glb')">
-        <span>Design 2</span>
-      </div>
-    </div>
-
-    <!-- Main AR Trigger Button -->
-    <button class="ar-button" onclick="launchAR()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-        <line x1="12" y1="22.08" x2="12" y2="12"></line>
-      </svg>
-      View On Your Table (AR)
-    </button>
-
-    <div class="ar-instructions">
-      <strong>In AR mode on your table:</strong> Drag with 2 fingers to move or rotate the placemat across your table surface, or pinch to adjust scale.
-    </div>
-
+  <!-- Header Logo (Links to Haus Stitch website) -->
+  <div class="logo-container">
+    <a href="https://hausstitch.com/" target="_blank" rel="noopener noreferrer">
+      <img src="LOGO.png" alt="Brand Logo">
+    </a>
   </div>
+
+  <!-- 3D Model Viewer Container -->
+  <div class="viewer-container">
+    <model-viewer 
+      id="ar-viewer"
+      src="design1.glb" 
+      alt="Virtual Table Placemat Try-On" 
+      ar 
+      ar-modes="webxr scene-viewer quick-look" 
+      ar-placement="floor"
+      ar-scale="auto"
+      camera-controls 
+      touch-action="pan-y"
+      orientation="0deg 0deg 0deg"
+      shadow-intensity="1">
+      
+      <!-- Native AR Trigger Slot -->
+      <button slot="ar-button" id="hidden-ar-btn" style="display: none;"></button>
+    </model-viewer>
+  </div>
+
+  <!-- Design Selector Buttons -->
+  <div class="design-selector">
+    <button class="select-btn active" onclick="switchDesign('design1.glb', this)">Design 1</button>
+    <button class="select-btn" onclick="switchDesign('design2.glb', this)">Design 2</button>
+  </div>
+
+  <!-- Custom AR Button -->
+  <button class="ar-launch-btn" onclick="triggerAR()">View on Your Table (AR)</button>
 
   <script>
     const viewer = document.getElementById('ar-viewer');
-    const hiddenArTrigger = document.getElementById('hidden-ar-trigger');
+    const hiddenArBtn = document.getElementById('hidden-ar-btn');
 
-    // Switch model between design1.glb and design2.glb
-    function selectDesign(cardElement, modelFile) {
+    // Switch between Design 1 and Design 2
+    function switchDesign(modelFile, element) {
       viewer.src = modelFile;
-
-      document.querySelectorAll('.design-card').forEach(card => card.classList.remove('active'));
-      cardElement.classList.add('active');
+      document.querySelectorAll('.select-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
     }
 
-    // Trigger native AR view launch
-    function launchAR() {
-      hiddenArTrigger.click();
+    // Trigger the AR experience when clicking the main button
+    function triggerAR() {
+      hiddenArBtn.click();
     }
   </script>
+
 </body>
 </html>
