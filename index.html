@@ -67,17 +67,17 @@
       --poster-color: transparent;
     }
 
-    /* Selection Buttons */
+    /* Selection Buttons - Grid Layout for 4 items */
     .design-selector {
-      display: flex;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
       margin-top: 20px;
       width: 100%;
       max-width: 500px;
     }
 
     .select-btn {
-      flex: 1;
       padding: 12px 16px;
       background: #FFFFFF;
       border: 1px solid var(--border-color);
@@ -87,6 +87,7 @@
       color: var(--text-color);
       cursor: pointer;
       transition: all 0.2s ease;
+      text-align: center;
     }
 
     .select-btn.active {
@@ -147,10 +148,12 @@
     </model-viewer>
   </div>
 
-  <!-- Design Selector Buttons -->
+  <!-- Design Selector Buttons (Grid Layout) -->
   <div class="design-selector">
     <button class="select-btn active" onclick="switchDesign('design1.glb', this)">Design 1</button>
     <button class="select-btn" onclick="switchDesign('design2.glb', this)">Design 2</button>
+    <button class="select-btn" onclick="switchDesign('design3.glb', this)">Design 3</button>
+    <button class="select-btn" onclick="switchDesign('design4.glb', this)">Design 4</button>
   </div>
 
   <!-- Custom AR Button -->
@@ -160,7 +163,7 @@
     const viewer = document.getElementById('ar-viewer');
     const hiddenArBtn = document.getElementById('hidden-ar-btn');
 
-    // Switch between Design 1 and Design 2
+    // Switch between designs dynamically
     function switchDesign(modelFile, element) {
       viewer.src = modelFile;
       document.querySelectorAll('.select-btn').forEach(btn => btn.classList.remove('active'));
