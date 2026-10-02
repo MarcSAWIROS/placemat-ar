@@ -3,426 +3,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Table Decor WebAR Try-On Studio</title>
+  <title>Haus Stitch — Virtual Table Try-On</title>
+  <!-- Google Fonts: Cormorant Garamond & Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
   
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Google Model Viewer -->
+  <!-- Load Google Model Viewer -->
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
   <style>
-    /* Custom scrollbar for horizontal design gallery */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
-    /* Glassmorphism styling */
-    .glass-card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+    :root {
+      --hs-bg: #FAF8F5;
+      --hs-dark: #1F2E23;
+      --hs-accent: #8C907A;
+      --hs-light-border: #E5E0D8;
+      --hs-card-bg: #FFFFFF;
     }
 
-    .glass-dark {
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--hs-bg);
+      color: var(--hs-dark);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
     }
 
-    /* Ensure model viewer takes up responsive container space */
+    /* Top Brand Header */
+    header {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      padding: 20px 16px 12px;
+      text-align: center;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(250,248,245,0.95) 0%, rgba(250,248,245,0) 100%);
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--hs-dark);
+    }
+
+    header p {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--hs-accent);
+      margin-top: 4px;
+    }
+
+    /* AR Viewport */
     model-viewer {
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       --poster-color: transparent;
     }
 
-    /* Pulsing animation for AR scan prompt */
-    @keyframes scanPulse {
-      0%, 100% { transform: scale(1); opacity: 0.8; }
-      50% { transform: scale(1.08); opacity: 1; }
+    /* Bottom Design Selector Container */
+    .controls-container {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 16px 12px 28px;
+      background: linear-gradient(0deg, rgba(250,248,245,0.98) 0%, rgba(250,248,245,0.85) 75%, rgba(250,248,245,0) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      z-index: 10;
     }
-    .animate-scan-pulse {
-      animation: scanPulse 2s infinite ease-in-out;
+
+    /* Horizontal Design Scroll Bar */
+    .design-selector {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      max-width: 100%;
+      padding: 4px 8px;
+      scrollbar-width: none;
+    }
+    .design-selector::-webkit-scrollbar { display: none; }
+
+    /* Design Button Cards */
+    .design-btn {
+      background: var(--hs-card-bg);
+      border: 1px solid var(--hs-light-border);
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--hs-dark);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .design-btn.active {
+      background: var(--hs-dark);
+      color: #FFFFFF;
+      border-color: var(--hs-dark);
+      box-shadow: 0 4px 10px rgba(31,46,35,0.2);
+    }
+
+    /* Main AR Trigger Button */
+    .ar-trigger-btn {
+      background-color: var(--hs-dark);
+      color: #FFFFFF;
+      border: none;
+      padding: 16px 36px;
+      border-radius: 30px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(31, 46, 35, 0.25);
+      transition: transform 0.2s ease, background 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ar-trigger-btn:active {
+      transform: scale(0.97);
     }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-amber-500 selection:text-white">
+<body>
 
-  <!-- Top Navigation Bar -->
-  <header class="fixed top-0 left-0 right-0 z-30 px-4 py-3 flex items-center justify-between glass-dark border-b border-slate-800">
-    <div class="flex items-center space-x-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-amber-500/20">
-        <i class="fa-solid font-black fa-layer-group text-lg"></i>
-      </div>
-      <div>
-        <h1 class="text-base font-bold text-slate-100 tracking-tight leading-none">Table Decor Studio</h1>
-        <p class="text-[11px] text-amber-400/90 font-medium mt-0.5">Interactive WebAR Try-On</p>
-      </div>
-    </div>
-
-    <div class="flex items-center space-x-2">
-      <!-- Helper / Guide Button -->
-      <button onclick="toggleModal('guideModal')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-xs flex items-center space-x-1.5 border border-slate-700/50">
-        <i class="fa-solid fa-circle-question text-amber-400"></i>
-        <span class="hidden sm:inline">AR Help</span>
-      </button>
-
-      <!-- How to Add Designs Button -->
-      <button onclick="toggleModal('configModal')" class="p-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 transition-all text-xs flex items-center space-x-1.5 border border-amber-500/30">
-        <i class="fa-solid fa-plus-circle"></i>
-        <span>Add Models</span>
-      </button>
-    </div>
+  <!-- Brand Header -->
+  <header>
+    <h1>HAUS STITCH</h1>
+    <p>Virtual Table Try-On</p>
   </header>
 
-  <!-- Main Interactive Viewport -->
-  <main class="relative w-full h-screen pt-16 pb-44 flex flex-col items-center justify-center bg-radial from-slate-800 to-slate-950">
-    
-    <!-- Model Orientation Quick Fix Controls (Floating top left) -->
-    <div class="absolute top-20 left-4 z-20 flex flex-col space-y-2">
-      <div class="glass-dark p-2.5 rounded-2xl border border-slate-700/60 shadow-xl max-w-[200px]">
-        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center justify-between">
-          <span>Rotation Fix</span>
-          <i class="fa-solid fa-rotate text-amber-400"></i>
-        </p>
-        <div class="grid grid-cols-2 gap-1.5 text-xs">
-          <button onclick="setOrientation('0deg 0deg 0deg')" class="rot-btn px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 font-medium transition-all text-[11px] text-center border border-slate-700">Flat (0°)</button>
-          <button onclick="setOrientation('90deg 0deg 0deg')" class="rot-btn px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 font-medium transition-all text-[11px] text-center border border-slate-700">Lay Flat (+90°)</button>
-          <button onclick="setOrientation('-90deg 0deg 0deg')" class="rot-btn px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 font-medium transition-all text-[11px] text-center border border-slate-700">Lay Flat (-90°)</button>
-          <button onclick="setOrientation('0deg 90deg 0deg')" class="rot-btn px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 font-medium transition-all text-[11px] text-center border border-slate-700">Rotate Side</button>
-        </div>
-      </div>
-    </div>
+  <!-- 3D & AR Viewer Component -->
+  <model-viewer 
+    id="ar-viewer"
+    src="placemat1.glb" 
+    alt="Haus Stitch Table Design" 
+    ar 
+    ar-modes="webxr scene-viewer quick-look" 
+    ar-placement="floor"
+    orientation="90deg 0deg 0deg"
+    camera-controls 
+    touch-action="pan-y">
 
-    <!-- Active Design Info Badge (Top Right) -->
-    <div class="absolute top-20 right-4 z-20 glass-dark px-3.5 py-2 rounded-2xl border border-slate-700/60 shadow-xl flex items-center space-x-2">
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-      <div>
-        <p class="text-[10px] uppercase tracking-wider text-slate-400">Selected Item</p>
-        <p id="activeItemTitle" class="text-xs font-bold text-amber-300 truncate max-w-[120px] sm:max-w-[200px]">Loading...</p>
-      </div>
-    </div>
+    <div class="controls-container" slot="interaction-prompt"></div>
 
-    <!-- Google 3D & AR Model Viewer Component -->
-    <model-viewer
-      id="arViewer"
-      src=""
-      alt="Table Placement WebAR Model"
-      ar
-      ar-modes="webxr scene-viewer quick-look"
-      ar-scale="auto"
-      ar-placement="floor"
-      camera-controls
-      touch-action="pan-y"
-      shadow-intensity="1.5"
-      shadow-softness="0.8"
-      exposure="1.1"
-      environment-image="neutral"
-      interaction-prompt="auto"
-      orientation="0deg 0deg 0deg"
-      class="w-full h-full cursor-grab active:cursor-grabbing">
+    <!-- AR Launch Controls Overlay -->
+    <div class="controls-container">
       
-      <!-- Custom AR Trigger Button slotted into model-viewer -->
-      <button slot="ar-button" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center space-x-3 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 font-extrabold px-6 py-4 rounded-full shadow-2xl shadow-amber-500/40 hover:scale-105 active:scale-95 transition-all duration-200 border-2 border-amber-300">
-        <i class="fa-solid fa-camera-rotate text-xl animate-scan-pulse"></i>
-        <span class="text-base tracking-wide uppercase">Try On Your Table (AR)</span>
+      <!-- Design Selection Buttons -->
+      <div class="design-selector" id="designList">
+        
+        <!-- EDIT/ADD YOUR MODELS HERE -->
+        <button class="design-btn active" onclick="switchModel(this, 'placemat1.glb')">Ziggy Eggshell</button>
+        <button class="design-btn" onclick="switchModel(this, 'placemat2.glb')">Ziggy Green</button>
+        <button class="design-btn" onclick="switchModel(this, 'placemat3.glb')">Ziggy Mocha</button>
+        <!-- TO ADD MORE: Simply copy a line above and replace the filename! -->
+
+      </div>
+
+      <!-- AR Trigger Button -->
+      <button slot="ar-button" class="ar-trigger-btn" id="arButton">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        View On Table
       </button>
 
-      <!-- Loading Indicator Slot -->
-      <div slot="poster" class="flex flex-col items-center justify-center h-full text-slate-400">
-        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-amber-400 mb-3"></i>
-        <p class="text-xs font-medium tracking-wide">Loading 3D Texture...</p>
-      </div>
-    </model-viewer>
-
-    <!-- 3D Orbit Helper Overlay -->
-    <div class="absolute bottom-48 left-1/2 -translate-x-1/2 pointer-events-none text-center">
-      <span class="px-3 py-1 rounded-full bg-slate-900/60 backdrop-blur-md text-[11px] text-slate-400 border border-slate-800/80 shadow-md">
-        <i class="fa-solid fa-hand-pointer text-amber-400 mr-1.5"></i> Drag to rotate 360° • Pinch to zoom
-      </span>
     </div>
-  </main>
-
-  <!-- Bottom Floating Design Selection Carousel -->
-  <footer class="fixed bottom-0 left-0 right-0 z-30 p-4 glass-dark border-t border-slate-800">
-    <div class="max-w-4xl mx-auto">
-      <div class="flex items-center justify-between mb-2 px-1">
-        <div class="flex items-center space-x-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Design Collection</span>
-          <span id="itemCountBadge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">0 Items</span>
-        </div>
-        <p class="text-[11px] text-slate-400">Tap design to preview</p>
-      </div>
-
-      <!-- Horizontal Scrollable Cards List -->
-      <div id="designCatalog" class="flex space-x-3 overflow-x-auto pb-1 pt-1 no-scrollbar scroll-smooth">
-        <!-- Dynamic Cards Inserted Here via JS -->
-      </div>
-    </div>
-  </footer>
-
-  <!-- AR Help / Surface Detection Guide Modal -->
-  <div id="guideModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-opacity">
-    <div class="glass-dark max-w-md w-full rounded-3xl p-6 border border-slate-700 shadow-2xl relative">
-      <button onclick="toggleModal('guideModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 text-lg">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <div class="flex items-center space-x-3 mb-4">
-        <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-lg">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
-        </div>
-        <div>
-          <h3 class="text-lg font-bold text-slate-100">How WebAR Try-On Works</h3>
-          <p class="text-xs text-slate-400">Follow these easy steps on your phone</p>
-        </div>
-      </div>
-
-      <div class="space-y-3 text-xs text-slate-300">
-        <div class="flex items-start space-x-3 p-3 rounded-2xl bg-slate-800/60 border border-slate-700/50">
-          <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 font-bold flex items-center justify-center shrink-0">1</span>
-          <div>
-            <p class="font-bold text-slate-200">Tap "Try On Your Table"</p>
-            <p class="text-slate-400 mt-0.5">Grants camera access to open iOS Quick Look or Android Scene Viewer.</p>
-          </div>
-        </div>
-
-        <div class="flex items-start space-x-3 p-3 rounded-2xl bg-slate-800/60 border border-slate-700/50">
-          <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 font-bold flex items-center justify-center shrink-0">2</span>
-          <div>
-            <p class="font-bold text-slate-200">Scan Your Table Surface</p>
-            <p class="text-slate-400 mt-0.5">Slowly move your phone side to side over your table so the camera detects the flat surface.</p>
-          </div>
-        </div>
-
-        <div class="flex items-start space-x-3 p-3 rounded-2xl bg-slate-800/60 border border-slate-700/50">
-          <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 font-bold flex items-center justify-center shrink-0">3</span>
-          <div>
-            <p class="font-bold text-slate-200">Finger Gestures in AR</p>
-            <ul class="text-slate-400 mt-1 space-y-1 list-disc list-inside">
-              <li><strong class="text-slate-300">Move:</strong> Drag with 1 finger on the screen</li>
-              <li><strong class="text-slate-300">Resize:</strong> Pinch with 2 fingers to scale</li>
-              <li><strong class="text-slate-300">Rotate:</strong> Twist with 2 fingers to line up with plates</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <button onclick="toggleModal('guideModal')" class="w-full mt-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition-all">
-        Got it, Let's Try!
-      </button>
-    </div>
-  </div>
-
-  <!-- How to Add New Designs Modal -->
-  <div id="configModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-opacity">
-    <div class="glass-dark max-w-lg w-full rounded-3xl p-6 border border-slate-700 shadow-2xl relative max-h-[85vh] overflow-y-auto">
-      <button onclick="toggleModal('configModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 text-lg">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <div class="flex items-center space-x-3 mb-4">
-        <div class="w-10 h-10 rounded-2xl bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400 text-lg">
-          <i class="fa-solid fa-code"></i>
-        </div>
-        <div>
-          <h3 class="text-lg font-bold text-slate-100">How to Add More Designs</h3>
-          <p class="text-xs text-slate-400">Edit the JS config in this file and upload to GitHub</p>
-        </div>
-      </div>
-
-      <div class="space-y-4 text-xs text-slate-300">
-        <p class="text-slate-300">
-          You don't need complex backends! Simply open your <code class="bg-slate-800 text-amber-300 px-1.5 py-0.5 rounded">index.html</code> file and edit the <code class="bg-slate-800 text-amber-300 px-1.5 py-0.5 rounded">DESIGNS</code> array at the bottom:
-        </p>
-
-        <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 font-mono text-[11px] text-emerald-400 overflow-x-auto">
-<pre><code>const DESIGNS = [
-  {
-    id: 'placemat-1',
-    title: 'Boho Linen Placemat',
-    category: 'Placemat',
-    glb: 'models/boho-placemat.glb',
-    thumbnail: 'https://placehold.co/150x150/1e293b/f59e0b?text=Boho',
-    defaultOrientation: '90deg 0deg 0deg' // Flattens standing models!
-  },
-  {
-    id: 'napkin-2',
-    title: 'Silk Red Napkin',
-    category: 'Napkin',
-    glb: 'models/red-napkin.glb',
-    thumbnail: 'https://placehold.co/150x150/1e293b/ef4444?text=Silk',
-    defaultOrientation: '0deg 0deg 0deg'
-  }
-];</code></pre>
-        </div>
-
-        <div class="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 space-y-1">
-          <p class="font-bold flex items-center"><i class="fa-solid fa-lightbulb mr-2"></i> Fix Standing Models:</p>
-          <p class="text-[11px] text-amber-200/80">
-            If your 3D napkin or tissue stands vertically, set <code class="bg-slate-900 px-1 rounded text-white">defaultOrientation: '90deg 0deg 0deg'</code> on that item. It will lie completely flat on the table automatically!
-          </p>
-        </div>
-
-        <ol class="list-decimal list-inside space-y-1 text-slate-400 text-[11px]">
-          <li>Upload your new <code class="text-slate-200">.glb</code> files to your GitHub repository.</li>
-          <li>Add a new entry to the <code class="text-slate-200">DESIGNS</code> array in <code class="text-slate-200">index.html</code>.</li>
-          <li>Commit changes. GitHub Pages automatically adds the new design card!</li>
-        </ol>
-      </div>
-
-      <button onclick="toggleModal('configModal')" class="w-full mt-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs uppercase tracking-wider transition-all border border-slate-700">
-        Close Instructions
-      </button>
-    </div>
-  </div>
+  </model-viewer>
 
   <script>
-    /* ==========================================================================
-       CATALOG CONFIGURATION
-       Add or remove your placemat & napkin 3D designs in this JavaScript array.
-       Each item automatically generates a card button in the bottom gallery.
-       ========================================================================== */
-    const DESIGNS = [
-      {
-        id: 'design-1',
-        title: 'Floral Placemat',
-        category: 'Placemat',
-        // Sample GLB model URL - Replace with your own GLB file path in GitHub (e.g. 'models/tissue-1.glb')
-        glb: 'https://modelviewer.dev/shared-assets/models/glTF-Sample-Assets/Models/Astronaut/glTF-Binary/Astronaut.glb',
-        thumbnail: 'https://placehold.co/150x150/1e293b/f59e0b?text=Floral+Set',
-        defaultOrientation: '90deg 0deg 0deg' // Rotates vertical GLBs flat onto table
-      },
-      {
-        id: 'design-2',
-        title: 'Linen Tissue Ring',
-        category: 'Napkin Tissue',
-        glb: 'https://modelviewer.dev/shared-assets/models/glTF-Sample-Assets/Models/Chair/glTF-Binary/Chair.glb',
-        thumbnail: 'https://placehold.co/150x150/1e293b/10b981?text=Linen+Tissue',
-        defaultOrientation: '0deg 0deg 0deg'
-      },
-      {
-        id: 'design-3',
-        title: 'Golden Pattern Set',
-        category: 'Luxury Set',
-        glb: 'https://modelviewer.dev/shared-assets/models/glTF-Sample-Assets/Models/Mixer/glTF-Binary/Mixer.glb',
-        thumbnail: 'https://placehold.co/150x150/1e293b/3b82f6?text=Gold+Pattern',
-        defaultOrientation: '90deg 0deg 0deg'
-      },
-      {
-        id: 'design-4',
-        title: 'Rustic Cotton Napkin',
-        category: 'Napkin',
-        glb: 'https://modelviewer.dev/shared-assets/models/glTF-Sample-Assets/Models/Lantern/glTF-Binary/Lantern.glb',
-        thumbnail: 'https://placehold.co/150x150/1e293b/ec4899?text=Rustic+Cotton',
-        defaultOrientation: '0deg 0deg 0deg'
-      }
-    ];
+    const viewer = document.getElementById('ar-viewer');
 
-    let activeDesignIndex = 0;
+    function switchModel(button, modelFilename) {
+      // Update model source
+      viewer.src = modelFilename;
 
-    // DOM Elements
-    const viewer = document.getElementById('arViewer');
-    const catalogContainer = document.getElementById('designCatalog');
-    const activeTitleEl = document.getElementById('activeItemTitle');
-    const itemCountBadgeEl = document.getElementById('itemCountBadge');
-
-    // Initialize Application
-    window.addEventListener('DOMContentLoaded', () => {
-      renderCatalog();
-      selectDesign(0);
-    });
-
-    /**
-     * Renders the bottom scrollable catalog cards dynamically from DESIGNS array
-     */
-    function renderCatalog() {
-      catalogContainer.innerHTML = '';
-      itemCountBadgeEl.textContent = `${DESIGNS.length} Item${DESIGNS.length === 1 ? '' : 's'}`;
-
-      DESIGNS.forEach((item, index) => {
-        const card = document.createElement('button');
-        card.id = `card-${index}`;
-        card.onclick = () => selectDesign(index);
-        
-        card.className = `shrink-0 p-2 rounded-2xl transition-all duration-200 text-left flex items-center space-x-3 border ${
-          index === activeDesignIndex 
-            ? 'bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/30' 
-            : 'bg-slate-800/70 border-slate-700/60 hover:bg-slate-800'
-        }`;
-
-        card.innerHTML = `
-          <div class="relative w-14 h-14 rounded-xl overflow-hidden bg-slate-900 border border-slate-700/80 shrink-0">
-            <img src="${item.thumbnail}" alt="${item.title}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/150x150/1e293b/ffffff?text=Design'"/>
-            <span class="absolute bottom-0 left-0 right-0 bg-slate-950/80 text-[9px] font-bold text-center py-0.5 text-amber-300 uppercase">${item.category}</span>
-          </div>
-          <div class="pr-3">
-            <p class="text-xs font-bold text-slate-100 truncate max-w-[100px]">${item.title}</p>
-            <p class="text-[10px] text-slate-400 flex items-center mt-0.5">
-              <i class="fa-solid fa-vr-cardboard text-amber-400 mr-1"></i> AR Ready
-            </p>
-          </div>
-        `;
-
-        catalogContainer.appendChild(card);
-      });
+      // Update active button styling
+      document.querySelectorAll('.design-btn').forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
     }
+  </script>
 
-    /**
-     * Updates active 3D model, title, orientation, and card highlights
-     */
-    function selectDesign(index) {
-      if (index < 0 || index >= DESIGNS.length) return;
-      
-      activeDesignIndex = index;
-      const selected = DESIGNS[index];
-
-      // Update Viewer Properties
-      viewer.src = selected.glb;
-      viewer.setAttribute('orientation', selected.defaultOrientation || '0deg 0deg 0deg');
-      
-      // Reset Camera Orbit to clean view
-      if (viewer.resetTurntable) {
-        viewer.resetTurntable();
-      }
-
-      // Update UI Text
-      activeTitleEl.textContent = selected.title;
-
-      // Update Cards UI state
-      DESIGNS.forEach((_, i) => {
-        const cardEl = document.getElementById(`card-${i}`);
-        if (!cardEl) return;
-
-        if (i === index) {
-          cardEl.className = 'shrink-0 p-2 rounded-2xl transition-all duration-200 text-left flex items-center space-x-3 border bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/30';
-        } else {
-          cardEl.className = 'shrink-0 p-2 rounded-2xl transition-all duration-200 text-left flex items-center space-x-3 border bg-slate-800/70 border-slate-700/60 hover:bg-slate-800';
-        }
-      });
-    }
-
-    /**
-     * Manually overrides model orientation to fix vertical standing models
-     */
-    function setOrientation(degString) {
-      viewer.setAttribute('orientation', degString);
-      
-      // Temporarily highlight active button
-      document.querySelectorAll('.rot-btn').forEach(btn => {
-        btn.classList.remove('bg-amber-500', 'text-slate-950');
-      });
-      event.currentTarget.classList.add('bg-amber-500', 'text-slate-950');
-    }
-
-    /**
+</body>
+</html>
